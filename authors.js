@@ -14,10 +14,27 @@ export async function getAuthors() {
 
 export async function getAuthorById(id) {
   // Query the database and return the author with a matching id or null
+  const queryText = "SELECT * FROM authors WHERE id = $1";
+
+  const result = await pool.query(queryText, [id]);
+
+  return result.rows[0] || null;
 }
 
 export async function createAuthor(author) {
   // Query the database to create an author and return the newly created author
+
+  const newId = author['id'];
+  const newFirstName = author['first_name'];
+  const newLastName = author['last_name'];
+
+  const insertText = "INSERT INTO authors (id, first_name, last_name) VALUES (newId = $1, newFirstName = $1, newLastName = $1)"
+
+  const result = await pool.query(insertText, [newId, newFirstName, newLastName]);
+
+  return result.rows[0] || null;
+
+
 }
 
 export async function updateAuthorById(id, updates) {
