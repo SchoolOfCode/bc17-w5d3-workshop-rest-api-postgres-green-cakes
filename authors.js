@@ -15,6 +15,7 @@ export async function getAuthors() {
 export async function getAuthorById(id) {
   // Query the database and return the author with a matching id or null
   const queryText = "SELECT * FROM authors WHERE id = $1";
+ 
 
   const result = await pool.query(queryText, [id]);
 
@@ -23,22 +24,30 @@ export async function getAuthorById(id) {
 
 export async function createAuthor(author) {
   // Query the database to create an author and return the newly created author
-
-  const newId = author['id'];
+  // define variables for the authour (first name and last name)
   const newFirstName = author['first_name'];
   const newLastName = author['last_name'];
 
-  const insertText = "INSERT INTO authors (id, first_name, last_name) VALUES (newId = $1, newFirstName = $1, newLastName = $1)"
+  // create a SQL sector (INSERT INTO) that takes in the column titles and Value are placehodlers with RETURN (givs us an outout of what we did)
+  const insertText = "INSERT INTO authors (first_name, last_name) VALUES ($1, $2) RETURNING *";
 
-  const result = await pool.query(insertText, [newId, newFirstName, newLastName]);
+  // Tell the pool of data to use the SQL sector with the added varibles
+  const result = await pool.query(insertText, [newFirstName, newLastName]);
 
   return result.rows[0] || null;
-
-
 }
 
 export async function updateAuthorById(id, updates) {
   // Query the database to update an author and return the newly updated author or null
+
+  const updatedFn = updates['first_name'];
+  const updatedLn = updates['last_name'];
+
+  const updateText = "UPDATE authors SET first_name = $1, last_name = $2 WHERE id = $3";
+
+  const result = await pool.query(updateText, [updatedFn, updatedLn, id]);
+
+  return result.rows[0] || null;
 }
 
 export async function deleteAuthorById(id) {
