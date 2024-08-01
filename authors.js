@@ -43,7 +43,7 @@ export async function updateAuthorById(id, updates) {
   const updatedFn = updates['first_name'];
   const updatedLn = updates['last_name'];
 
-  const updateText = "UPDATE authors SET first_name = $1, last_name = $2 WHERE id = $3";
+  const updateText = "UPDATE authors SET first_name = $1, last_name = $2 WHERE id = $3 RETURNING *";
 
   const result = await pool.query(updateText, [updatedFn, updatedLn, id]);
 
@@ -52,4 +52,9 @@ export async function updateAuthorById(id, updates) {
 
 export async function deleteAuthorById(id) {
   // Query the database to delete an author and return the deleted author or null
+  const insertText = "DELETE FROM authors WHERE id = $1";
+
+  const result = await pool.query(insertText, [id]);
+
+  return result.rows[0] || null;
 }
